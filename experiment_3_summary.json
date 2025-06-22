@@ -1,0 +1,240 @@
+{
+  "Base: Linear Regression": {
+    "test_rmse": 1199.8068783132717,
+    "test_r2": -3.8170697727627383,
+    "test_mae": 1165.9391381307737,
+    "test_mape": 397.64300071776364,
+    "training_time": 0.05083012580871582
+  },
+  "Base: Ridge Regression": {
+    "test_rmse": 1120.099460711435,
+    "test_r2": -3.1982995118360646,
+    "test_mae": 1084.6066007081256,
+    "test_mape": 364.2818856508282,
+    "training_time": 4.311779022216797
+  },
+  "Base: Lasso Regression": {
+    "test_rmse": 1233.8362270945734,
+    "test_r2": -4.0941916226430255,
+    "test_mae": 1201.007007154683,
+    "test_mape": 412.38405992399964,
+    "training_time": 1.2488937377929688
+  },
+  "Base: Random Forest": {
+    "test_rmse": 386.6978845575819,
+    "test_r2": 0.4996155158376171,
+    "test_mae": 293.0113088906146,
+    "test_mape": 93.40809460170905,
+    "training_time": 1.2941739559173584
+  },
+  "Base: XGBoost": {
+    "test_rmse": 348.6668247589667,
+    "test_r2": 0.5931994915008545,
+    "test_mae": 267.6117248535156,
+    "test_mape": 75.90763944946373,
+    "training_time": 4.278663158416748
+  },
+  "Base: SVR": {
+    "test_rmse": 648.2051931407057,
+    "test_r2": -0.405999785293651,
+    "test_mae": 484.40850844620655,
+    "test_mape": 131.5546466764278,
+    "training_time": 1.4932632446289062
+  },
+  "Base: Neural Network": {
+    "test_rmse": 309.89770809734955,
+    "test_r2": 0.6786361875912595,
+    "test_mae": 236.3460604038407,
+    "test_mape": 141.7825846844412,
+    "training_time": 16.245768070220947
+  },
+  "Ensemble: Random Forest": {
+    "test_rmse": 387.55736114829165,
+    "test_r2": 0.49738872999715045,
+    "test_mae": 293.1014381661824,
+    "test_mape": 93.24430259980136,
+    "training_time": 1.6847560405731201
+  },
+  "Ensemble: Extra Trees": {
+    "test_rmse": 396.4637762612546,
+    "test_r2": 0.47402237627958965,
+    "test_mae": 299.5340789624489,
+    "test_mape": 94.50870643363466,
+    "training_time": 0.7679939270019531
+  },
+  "Ensemble: Bagging (Linear)": {
+    "test_rmse": 743.0997519373368,
+    "test_r2": -0.8477979239856948,
+    "test_mae": 687.1820551144269,
+    "test_mape": 197.532594526646,
+    "training_time": 3.5699710845947266
+  },
+  "Ensemble: Bagging (Ridge)": {
+    "test_rmse": 733.0643993692929,
+    "test_r2": -0.798226940949327,
+    "test_mae": 676.4360870664796,
+    "test_mape": 193.44771254944985,
+    "training_time": 0.35106897354125977
+  },
+  "Ensemble: Bagging (SVR)": {
+    "test_rmse": 626.3081806542067,
+    "test_r2": -0.31261212277623507,
+    "test_mae": 467.8311945058523,
+    "test_mape": 146.28104112510633,
+    "training_time": 6.398000955581665
+  },
+  "Ensemble: Bagging (Neural Network)": {
+    "test_rmse": 940.8547684136889,
+    "test_r2": -1.9621389227434203,
+    "test_mae": 366.9690983266542,
+    "test_mape": 153.65122332939154,
+    "training_time": 234.58251214027405
+  },
+  "Ensemble: AdaBoost (Linear)": {
+    "test_rmse": 1143.9888369909131,
+    "test_r2": -3.379291109300646,
+    "test_mae": 1108.0520187788404,
+    "test_mape": 375.15281300540795,
+    "training_time": 0.5053679943084717
+  },
+  "Ensemble: AdaBoost (Ridge)": {
+    "test_rmse": 1178.9901400475476,
+    "test_r2": -3.6513667963617573,
+    "test_mae": 1142.663511087697,
+    "test_mape": 388.8579478294651,
+    "training_time": 0.18123817443847656
+  },
+  "Ensemble: Gradient Boosting": {
+    "test_rmse": 351.37271727686186,
+    "test_r2": 0.5868608833753314,
+    "test_mae": 274.6923189625167,
+    "test_mape": 75.40295667524946,
+    "training_time": 21.685144662857056
+  },
+  "Ensemble: XGBoost": {
+    "test_rmse": 323.0910161045955,
+    "test_r2": 0.6506907939910889,
+    "test_mae": 244.631591796875,
+    "test_mape": 76.55679644029088,
+    "training_time": 2.3979079723358154
+  },
+  "Ensemble: XGBoost Tuned": {
+    "test_rmse": 347.07757598266124,
+    "test_r2": 0.5968995094299316,
+    "test_mae": 265.50213623046875,
+    "test_mape": 77.26945180745287,
+    "training_time": 6.325896978378296
+  },
+  "Ensemble: LightGBM": {
+    "test_rmse": 332.83430092915603,
+    "test_r2": 0.6293052434921265,
+    "test_mae": 250.93701171875,
+    "test_mape": 76.28678936259313,
+    "training_time": 4.5234458446502686
+  },
+  "Ensemble: Voting (Linear Models)": {
+    "test_rmse": 1177.0299177544593,
+    "test_r2": -3.6359126667729225,
+    "test_mae": 1142.9171762651408,
+    "test_mape": 387.6759022369303,
+    "training_time": 1.4354438781738281
+  },
+  "Ensemble: Voting (Tree Models)": {
+    "test_rmse": 346.3498856251437,
+    "test_r2": 0.5985880111418532,
+    "test_mae": 267.4833505978362,
+    "test_mape": 76.78072281479285,
+    "training_time": 6.577636957168579
+  },
+  "Ensemble: Voting (Tree Models - Equal)": {
+    "test_rmse": 348.4226631006289,
+    "test_r2": 0.5937690261536612,
+    "test_mae": 269.30710935406324,
+    "test_mape": 77.15490316679463,
+    "training_time": 6.626368045806885
+  },
+  "Ensemble: Voting (Mixed - Equal)": {
+    "test_rmse": 696.7154412277051,
+    "test_r2": -0.6243182128324449,
+    "test_mae": 638.1800361854011,
+    "test_mape": 140.90886322306713,
+    "training_time": 6.839462995529175
+  },
+  "Ensemble: Voting (Mixed - Weighted)": {
+    "test_rmse": 490.9913579031312,
+    "test_r2": 0.19330765041733866,
+    "test_mae": 417.82642337979075,
+    "test_mape": 80.46897795675527,
+    "training_time": 6.402289867401123
+  },
+  "Ensemble: Voting (All Models - Equal)": {
+    "test_rmse": 693.5964465758393,
+    "test_r2": -0.6098075547636423,
+    "test_mae": 640.2405016837148,
+    "test_mape": 146.85939407380909,
+    "training_time": 11.323485136032104
+  },
+  "Ensemble: Voting (All Models - Weighted)": {
+    "test_rmse": 486.4053911154453,
+    "test_r2": 0.20830664117512132,
+    "test_mae": 419.8146478355413,
+    "test_mape": 84.16046775168199,
+    "training_time": 11.752700090408325
+  },
+  "Ensemble: Voting (Best Models)": {
+    "test_rmse": 347.4497222224598,
+    "test_r2": 0.5960345899464284,
+    "test_mae": 267.87834082057464,
+    "test_mape": 77.26371220450584,
+    "training_time": 9.05190920829773
+  },
+  "Ensemble: Stacking (Linear)": {
+    "test_rmse": 442.6380235377361,
+    "test_r2": 0.34437172008485795,
+    "test_mae": 373.3216590231273,
+    "test_mape": 76.66559758025821,
+    "training_time": 1.9073486328125e-06
+  },
+  "Ensemble: Stacking (Ridge)": {
+    "test_rmse": 442.50405751647514,
+    "test_r2": 0.3447685166368546,
+    "test_mae": 373.17657630518187,
+    "test_mape": 76.63590002568664,
+    "training_time": 9.5367431640625e-07
+  },
+  "Ensemble: Stacking (Lasso)": {
+    "test_rmse": 343.8001912832749,
+    "test_r2": 0.6044763379135962,
+    "test_mae": 265.06375873039667,
+    "test_mape": 70.06494596052215,
+    "training_time": 4.0531158447265625e-06
+  },
+  "Ensemble: Stacking (RF)": {
+    "test_rmse": 340.5615976411906,
+    "test_r2": 0.6118928968803143,
+    "test_mae": 262.9886512190011,
+    "test_mape": 73.59209930299949,
+    "training_time": 1.9073486328125e-06
+  },
+  "Ensemble: Stacking (XGBoost)": {
+    "test_rmse": 339.6865282874786,
+    "test_r2": 0.6138848066329956,
+    "test_mae": 260.604248046875,
+    "test_mape": 71.04674656763586,
+    "training_time": 8.106231689453125e-06
+  },
+  "Ensemble: Stacking (ExtraTrees)": {
+    "test_rmse": 373.02129499411797,
+    "test_r2": 0.5343844315045112,
+    "test_mae": 293.0740403145322,
+    "test_mape": 81.04289033529795,
+    "training_time": 3.0994415283203125e-06
+  },
+  "Ensemble: Stacking (Neural Network)": {
+    "test_rmse": 329.6289134591122,
+    "test_r2": 0.636410912611918,
+    "test_mae": 251.4970718696399,
+    "test_mape": 74.66320068155414,
+    "training_time": 4.0531158447265625e-06
+  }
+}

@@ -1,0 +1,124 @@
+
+SUGGESTED PAPER STRUCTURE FOR ACADEMIC PUBLICATION
+================================================
+
+Title: "Ensemble Learning Approaches for Seoul Bike Sharing Demand Prediction: A Comparative Study of Linear, Non-parametric, and Neural Methods"
+
+1. ABSTRACT (250-300 words)
+   - Problem statement and motivation
+   - Methodology overview (4 base algorithms, 3 ensemble methods)
+   - Key findings and performance metrics
+   - Practical implications
+
+2. INTRODUCTION (800-1000 words)
+   - Background on bike sharing systems and their importance
+   - Challenges in demand prediction
+   - Research gap and motivation for ensemble learning
+   - Research objectives and contributions
+   - Paper organization
+
+3. RELATED WORK (600-800 words)
+   - Bike sharing demand prediction studies
+   - Ensemble learning applications in regression
+   - Comparison with existing approaches
+   - Research positioning
+
+4. METHODOLOGY (1200-1500 words)
+   4.1 Dataset Description
+       - Seoul Bike Sharing dataset characteristics
+       - Feature engineering process (90 features)
+       - Data preprocessing and temporal splitting
+   
+   4.2 Base Learning Algorithms
+       - Linear Regression and regularized variants
+       - K-Nearest Neighbors Regression
+       - Multi-layer Perceptron Neural Networks
+       - Support Vector Regression
+       [Include mathematical formulations from mathematical_formulations.tex]
+   
+   4.3 Ensemble Learning Methods
+       - Bagging (Bootstrap Aggregating)
+       - Voting (Weighted combination)
+       - Stacking (Meta-learning approach)
+       [Include ensemble equations]
+   
+   4.4 Experimental Setup
+       - Cross-validation strategy
+       - Performance metrics (RMSE, R², MAE, MAPE)
+       - Statistical significance testing
+       - Implementation details
+
+5. EXPERIMENTAL RESULTS (1000-1200 words)
+   5.1 Overall Performance Analysis
+       - Complete results table
+       - Performance comparison visualization
+       [Reference performance_comparison.png]
+   
+   5.2 Method Type Comparison
+       - Base models vs ensemble methods
+       - Statistical significance analysis
+       - Effect size calculations
+   
+   5.3 Computational Efficiency
+       - Training time analysis
+       - Performance-efficiency trade-offs
+       - Scalability considerations
+
+6. DISCUSSION (800-1000 words)
+   6.1 Key Findings and Insights
+       - Why certain methods performed better
+       - Ensemble learning effectiveness
+       - Feature importance analysis
+   
+   6.2 Practical Implications
+       - Real-world deployment recommendations
+       - Computational requirements
+       - Model selection guidelines
+   
+   6.3 Limitations and Threats to Validity
+       - Dataset limitations
+       - Generalizability concerns
+       - Methodological limitations
+
+7. CONCLUSION (400-500 words)
+   - Summary of main contributions
+   - Key findings and their significance
+   - Future research directions
+   - Final recommendations
+
+RECOMMENDED FIGURES:
+- Figure 1: Performance Comparison by Method Type (performance_comparison.png)
+- Figure 2: Top Model Rankings and Performance Metrics
+- Figure 3: Training Time vs Performance Trade-off Analysis
+
+RECOMMENDED TABLES:
+- Table 1: Dataset Characteristics and Feature Categories
+- Table 2: Hyperparameter Settings for All Models
+- Table 3: Complete Experimental Results (24 models)
+- Table 4: Statistical Significance Test Results
+- Table 5: Performance Summary by Method Type
+
+MATHEMATICAL CONTENT:
+- Use LaTeX formulations from mathematical_formulations.tex
+- Include all ensemble method equations
+- Define performance metrics mathematically
+- Provide statistical test formulations
+
+WRITING GUIDELINES:
+1. Use academic writing style with past tense for methodology
+2. Include confidence intervals and error bars
+3. Report statistical significance with p-values
+4. Compare against baseline methods
+5. Discuss both statistical and practical significance
+6. Ensure reproducibility with detailed parameters
+7. Use consistent mathematical notation
+8. Reference all figures and tables in text
+9. Include limitations and future work
+10. Follow target journal's formatting guidelines
+
+SUBMISSION RECOMMENDATIONS:
+- Target journals: Applied Sciences, Machine Learning, Data Mining
+- Expected length: 6000-8000 words
+- Include supplementary materials for detailed results
+- Ensure all figures are high resolution (≥300 DPI)
+- Provide code and data availability statements

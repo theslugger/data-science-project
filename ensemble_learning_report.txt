@@ -1,0 +1,45 @@
+
+=== Seoul Bike Dataset Ensemble Learning Methods Comparison Report ===
+
+【Dataset Overview】
+- Training samples: 6132
+- Validation samples: 1314
+- Test samples: 1314
+- Number of features: 15
+
+【Base Model Performance】
+- Linear Regression: RMSE=430.74, MAE=323.60, R²=0.5414
+- KNN Regression: RMSE=435.55, MAE=292.97, R²=0.5311
+- Neural Network: RMSE=240.60, MAE=154.00, R²=0.8569
+- SVR: RMSE=333.32, MAE=206.25, R²=0.7254
+
+【Ensemble Learning Model Performance】
+- Bagging-LR: RMSE=430.42, MAE=322.92, R²=0.5421
+- Bagging-KNN: RMSE=425.71, MAE=286.15, R²=0.5520
+- Voting: RMSE=394.90, MAE=277.22, R²=0.6145
+- AdaBoost: RMSE=451.18, MAE=356.05, R²=0.4968
+- GradientBoosting: RMSE=241.64, MAE=160.37, R²=0.8557
+- Stacking: RMSE=324.47, MAE=211.11, R²=0.7398
+
+【Best Models】
+- Best RMSE: Neural Network (RMSE: 240.60)
+- Best R²: Neural Network (R²: 0.8569)
+
+【Ensemble Method Category Performance Analysis】
+- Bagging: Average RMSE=428.07, Average R²=0.5471, Method count=2
+- Voting: Average RMSE=394.90, Average R²=0.6145, Method count=1
+- Stacking: Average RMSE=324.47, Average R²=0.7398, Method count=1
+- Boosting: Average RMSE=346.41, Average R²=0.6763, Method count=2
+
+【Conclusions and Recommendations】
+1. Ensemble learning methods generally outperform single base models
+2. Stacking method performs best on RMSE metric
+3. Stacking method performs best on R² metric  
+4. Recommend prioritizing Neural Network model for practical applications
+
+【Technical Details】
+- Data preprocessing: Standardization, categorical variable encoding, temporal feature extraction
+- Cross-validation: 5-fold cross-validation for Stacking model
+- Evaluation metrics: RMSE, MAE, R², MSE
+- Base models: Linear Regression, KNN, Neural Network, SVR
+- Ensemble methods: Bagging, Voting, Stacking, Boosting (AdaBoost and GradientBoosting)

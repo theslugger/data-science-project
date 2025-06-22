@@ -1,0 +1,49 @@
+ENSEMBLE LEARNING EXPERIMENTAL RESULTS SUMMARY
+============================================================
+Total Models Evaluated: 24
+Dataset: Seoul Bike Sharing (8,465 records, 90 features)
+
+BEST PERFORMING MODEL:
+------------------------------
+Model: Voting Linear+NN (90F)
+Type: Voting
+Test RMSE: 201.98
+Test R²: 0.8635
+Test MAE: 151.32
+Test MAPE: 53.21%
+Training Time: 20.63 seconds
+
+PERFORMANCE BY METHOD TYPE:
+------------------------------
+Voting (4 models):
+  Average RMSE: 291.62 ± 95.84
+  Average R²: 0.6924 ± 0.2043
+  Best RMSE: 201.98
+
+Base Model (9 models):
+  Average RMSE: 331.12 ± 170.97
+  Average R²: 0.5462 ± 0.4937
+  Best RMSE: 214.71
+
+Stacking (6 models):
+  Average RMSE: 329.34 ± 41.18
+  Average R²: 0.6323 ± 0.0856
+  Best RMSE: 258.12
+
+Bagging (5 models):
+  Average RMSE: 420.96 ± 104.49
+  Average R²: 0.3778 ± 0.3138
+  Best RMSE: 331.05
+
+TOP 5 MODELS BY TEST RMSE:
+------------------------------
+1. Voting Linear+NN (90F)
+   RMSE: 201.98, R²: 0.8635
+2. Lasso Regression (90F)
+   RMSE: 214.71, R²: 0.8457
+3. Neural Network Deep (90F)
+   RMSE: 226.11, R²: 0.8289
+4. Neural Network Basic (90F)
+   RMSE: 229.22, R²: 0.8242
+5. SVR Linear (90F)
+   RMSE: 230.41, R²: 0.8223
