@@ -17,6 +17,8 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 from sklearn.ensemble import (BaggingRegressor, VotingRegressor, 
                              GradientBoostingRegressor, AdaBoostRegressor)
+import joblib
+import pickle
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -569,6 +571,235 @@ class EnsembleLearningComparison:
         print(report)
         return report
     
+    def save_best_model(self):
+        """保存最优集成模型为.sav文件"""
+        print("保存最优集成模型...")
+        
+        all_results = {**self.base_results, **self.ensemble_results}
+        
+        # 找到RMSE最小的模型（最优模型）
+        best_model_name = min(all_results.keys(), key=lambda x: all_results[x]['RMSE'])
+        best_rmse = all_results[best_model_name]['RMSE']
+        best_r2 = all_results[best_model_name]['R²']
+        
+        print(f"最优模型: {best_model_name}")
+        print(f"RMSE: {best_rmse:.2f}, R²: {best_r2:.4f}")
+        
+        # 准备要保存的模型对象
+        model_to_save = None
+        
+        if best_model_name == 'Stacking':
+            # Stacking模型需要特殊处理
+            print("保存Stacking模型...")
+            
+            # 重新训练Stacking模型以获取完整的模型对象
+            kf = KFold(n_splits=5, shuffle=True, random_state=42)
+            stacking_features_train = np.zeros((len(self.X_train), len(self.stacking_models['level0'])))
+            
+            # 训练第一层模型
+            trained_level0_models = []
+            for i, model in enumerate(self.stacking_models['level0']):
+                # 克隆模型以避免修改原始模型
+                from sklearn.base import clone
+                model_clone = clone(model)
+                
+                cv_predictions = np.zeros(len(self.X_train))
+                for train_idx, val_idx in kf.split(self.X_train):
+                    X_fold_train, X_fold_val = self.X_train.iloc[train_idx], self.X_train.iloc[val_idx]
+                    y_fold_train = self.y_train.iloc[train_idx]
+                    
+                    if isinstance(model_clone, SVR):
+                        fold_scaler = StandardScaler()
+                        X_fold_train_scaled = fold_scaler.fit_transform(X_fold_train)
+                        X_fold_val_scaled = fold_scaler.transform(X_fold_val)
+                        model_clone.fit(X_fold_train_scaled, y_fold_train)
+                        cv_predictions[val_idx] = model_clone.predict(X_fold_val_scaled)
+                    else:
+                        model_clone.fit(X_fold_train, y_fold_train)
+                        cv_predictions[val_idx] = model_clone.predict(X_fold_val)
+                
+                stacking_features_train[:, i] = cv_predictions
+                
+                # 在完整训练集上训练最终模型
+                final_model = clone(model)
+                if isinstance(final_model, SVR):
+                    final_model.fit(self.X_train_scaled, self.y_train)
+                else:
+                    final_model.fit(self.X_train, self.y_train)
+                trained_level0_models.append(final_model)
+            
+            # 训练第二层模型
+            from sklearn.base import clone
+            level1_model = clone(self.stacking_models['level1'])
+            level1_model.fit(stacking_features_train, self.y_train)
+            
+            # 创建Stacking模型字典
+            stacking_model_dict = {
+                'level0_models': trained_level0_models,
+                'level1_model': level1_model,
+                'scaler': self.scaler,
+                'feature_columns': list(self.X_train.columns),
+                'model_type': 'Stacking'
+            }
+            
+            model_to_save = stacking_model_dict
+            
+        else:
+            # 对于其他模型，获取已训练的模型
+            if best_model_name in self.base_results:
+                # 基础模型
+                model_to_save = self.base_models[best_model_name]
+                
+                # 确保模型已经训练
+                if best_model_name in ['Neural Network', 'SVR']:
+                    model_to_save.fit(self.X_train_scaled, self.y_train)
+                else:
+                    model_to_save.fit(self.X_train, self.y_train)
+                    
+            else:
+                # 集成模型
+                model_to_save = self.ensemble_models[best_model_name]
+                model_to_save.fit(self.X_train, self.y_train)
+        
+        # 创建模型包，包含模型、预处理器和元数据
+        model_package = {
+            'model': model_to_save,
+            'scaler': self.scaler,
+            'feature_columns': list(self.X_train.columns),
+            'model_name': best_model_name,
+            'performance': {
+                'RMSE': best_rmse,
+                'R²': best_r2,
+                'MAE': all_results[best_model_name]['MAE'],
+                'MSE': all_results[best_model_name]['MSE']
+            },
+            'model_type': 'ensemble' if best_model_name in self.ensemble_results else 'base'
+        }
+        
+        # 保存模型为.sav文件
+        model_filename = f'best_ensemble_model_{best_model_name.replace("-", "_").replace(" ", "_")}.sav'
+        
+        try:
+            # 使用joblib保存（推荐用于scikit-learn模型）
+            joblib.dump(model_package, model_filename)
+            print(f"✅ 模型已成功保存为: {model_filename}")
+            
+            # 同时保存为.pkl文件作为备份
+            pkl_filename = model_filename.replace('.sav', '.pkl')
+            with open(pkl_filename, 'wb') as f:
+                pickle.dump(model_package, f)
+            print(f"✅ 备份文件已保存为: {pkl_filename}")
+            
+        except Exception as e:
+            print(f"❌ 保存模型时发生错误: {str(e)}")
+            return None
+        
+        # 验证保存的模型
+        self.verify_saved_model(model_filename, model_package)
+        
+        return model_filename
+    
+    def verify_saved_model(self, filename, original_model_package):
+        """验证保存的模型是否可以正确加载和预测"""
+        print("验证保存的模型...")
+        
+        try:
+            # 加载模型
+            loaded_model_package = joblib.load(filename)
+            
+            # 检查元数据
+            print(f"加载的模型名称: {loaded_model_package['model_name']}")
+            print(f"模型性能: RMSE={loaded_model_package['performance']['RMSE']:.2f}")
+            
+            # 进行预测测试
+            if loaded_model_package['model_name'] == 'Stacking':
+                # Stacking模型预测
+                test_features = np.zeros((len(self.X_test), len(loaded_model_package['model']['level0_models'])))
+                
+                for i, level0_model in enumerate(loaded_model_package['model']['level0_models']):
+                    if isinstance(level0_model, SVR):
+                        test_features[:, i] = level0_model.predict(self.X_test_scaled)
+                    else:
+                        test_features[:, i] = level0_model.predict(self.X_test)
+                
+                test_predictions = loaded_model_package['model']['level1_model'].predict(test_features)
+                
+            else:
+                # 其他模型预测
+                model = loaded_model_package['model']
+                if loaded_model_package['model_name'] in ['Neural Network', 'SVR']:
+                    test_predictions = model.predict(self.X_test_scaled)
+                else:
+                    test_predictions = model.predict(self.X_test)
+            
+            # 计算预测误差
+            test_rmse = np.sqrt(mean_squared_error(self.y_test, test_predictions))
+            original_rmse = original_model_package['performance']['RMSE']
+            
+            if abs(test_rmse - original_rmse) < 0.01:  # 允许小的数值误差
+                print("✅ 模型验证成功！加载的模型预测结果与原始模型一致")
+            else:
+                print(f"⚠️ 预测结果有差异: 原始RMSE={original_rmse:.2f}, 加载后RMSE={test_rmse:.2f}")
+                
+        except Exception as e:
+            print(f"❌ 模型验证失败: {str(e)}")
+    
+    @staticmethod
+    def load_best_model(filename):
+        """静态方法：加载保存的最优模型"""
+        try:
+            model_package = joblib.load(filename)
+            print(f"✅ 模型 '{model_package['model_name']}' 加载成功")
+            print(f"模型性能: RMSE={model_package['performance']['RMSE']:.2f}, R²={model_package['performance']['R²']:.4f}")
+            return model_package
+        except Exception as e:
+            print(f"❌ 模型加载失败: {str(e)}")
+            return None
+    
+    @staticmethod
+    def predict_with_saved_model(model_package, X_new):
+        """使用保存的模型进行预测"""
+        try:
+            # 检查特征列是否匹配
+            if hasattr(X_new, 'columns'):
+                expected_features = model_package['feature_columns']
+                if list(X_new.columns) != expected_features:
+                    print("⚠️ 警告: 输入特征与模型训练时的特征不完全匹配")
+                    print(f"期望特征: {expected_features}")
+                    print(f"输入特征: {list(X_new.columns)}")
+            
+            # 数据预处理
+            scaler = model_package['scaler']
+            model = model_package['model']
+            model_name = model_package['model_name']
+            
+            if model_name == 'Stacking':
+                # Stacking模型预测
+                level0_predictions = np.zeros((len(X_new), len(model['level0_models'])))
+                
+                for i, level0_model in enumerate(model['level0_models']):
+                    if isinstance(level0_model, SVR):
+                        X_scaled = scaler.transform(X_new)
+                        level0_predictions[:, i] = level0_model.predict(X_scaled)
+                    else:
+                        level0_predictions[:, i] = level0_model.predict(X_new)
+                
+                predictions = model['level1_model'].predict(level0_predictions)
+                
+            else:
+                # 其他模型预测
+                if model_name in ['Neural Network', 'SVR']:
+                    X_scaled = scaler.transform(X_new)
+                    predictions = model.predict(X_scaled)
+                else:
+                    predictions = model.predict(X_new)
+            
+            return predictions
+            
+        except Exception as e:
+            print(f"❌ 预测失败: {str(e)}")
+            return None
+    
     def run_complete_analysis(self):
         """Run complete analysis pipeline"""
         print("Starting ensemble learning comparison analysis...")
@@ -590,7 +821,16 @@ class EnsembleLearningComparison:
         # 5. Generate report
         self.generate_summary_report()
         
-        print("Analysis completed! Results saved to images and report files.")
+        # 6. Save best model
+        best_model_file = self.save_best_model()
+        
+        print("\n" + "="*60)
+        print("🎉 Analysis completed! Results saved to:")
+        print(f"📊 Performance images: ensemble_performance_comparison.png, ensemble_detailed_comparison.png")
+        print(f"📋 Analysis report: ensemble_learning_report.txt")
+        if best_model_file:
+            print(f"💾 Best model saved as: {best_model_file}")
+        print("="*60)
 
 # Main program
 if __name__ == "__main__":
