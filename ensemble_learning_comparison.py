@@ -195,19 +195,13 @@ class EnsembleLearningComparison:
         
         # 1. Bagging ensemble
         print("Creating Bagging ensemble...")
-        ensemble_models['Bagging-LR'] = BaggingRegressor(
+        ensemble_models['Bagging'] = BaggingRegressor(
             estimator=LinearRegression(),
             n_estimators=10,
             random_state=42
         )
         
-        ensemble_models['Bagging-KNN'] = BaggingRegressor(
-            estimator=KNeighborsRegressor(n_neighbors=5),
-            n_estimators=10,
-            random_state=42
-        )
-        
-        # 2. Voting ensemble - train with original data
+        # 2. Voting ensemble
         print("Creating Voting ensemble...")
         voting_estimators = [
             ('lr', LinearRegression()),
@@ -222,14 +216,8 @@ class EnsembleLearningComparison:
             'level1': LinearRegression()
         }
         
-        # 4. Boosting ensemble
-        print("Creating Boosting ensemble...")
-        ensemble_models['AdaBoost'] = AdaBoostRegressor(
-            estimator=LinearRegression(),
-            n_estimators=50,
-            random_state=42
-        )
-        
+        # 4. GradientBoosting ensemble
+        print("Creating GradientBoosting ensemble...")
         ensemble_models['GradientBoosting'] = GradientBoostingRegressor(
             n_estimators=100,
             max_depth=3,
@@ -392,10 +380,10 @@ class EnsembleLearningComparison:
         
         # Categorize ensemble methods
         ensemble_categories = {
-            'Bagging': ['Bagging-LR', 'Bagging-KNN'],
+            'Bagging': ['Bagging'],
             'Voting': ['Voting'],
             'Stacking': ['Stacking'],
-            'Boosting': ['AdaBoost', 'GradientBoosting']
+            'GradientBoosting': ['GradientBoosting']
         }
         
         # Plot detailed method comparison
@@ -485,10 +473,10 @@ class EnsembleLearningComparison:
         
         # Ensemble method category performance
         ensemble_categories = {
-            'Bagging': ['Bagging-LR', 'Bagging-KNN'],
+            'Bagging': ['Bagging'],
             'Voting': ['Voting'],
             'Stacking': ['Stacking'],
-            'Boosting': ['AdaBoost', 'GradientBoosting']
+            'GradientBoosting': ['GradientBoosting']
         }
         
         category_performance = {}
@@ -572,18 +560,31 @@ class EnsembleLearningComparison:
         return report
     
     def save_best_model(self):
-        """保存最优集成模型为.sav文件"""
-        print("保存最优集成模型...")
+        """Save GradientBoosting model as .sav file"""
+        print("Saving GradientBoosting model...")
         
         all_results = {**self.base_results, **self.ensemble_results}
         
-        # 找到RMSE最小的模型（最优模型）
-        best_model_name = min(all_results.keys(), key=lambda x: all_results[x]['RMSE'])
-        best_rmse = all_results[best_model_name]['RMSE']
-        best_r2 = all_results[best_model_name]['R²']
-        
-        print(f"最优模型: {best_model_name}")
-        print(f"RMSE: {best_rmse:.2f}, R²: {best_r2:.4f}")
+        # Force save GradientBoosting model
+        if 'GradientBoosting' in all_results:
+            best_model_name = 'GradientBoosting'
+            best_rmse = all_results[best_model_name]['RMSE']
+            best_r2 = all_results[best_model_name]['R²']
+            
+            print(f"Saving model: {best_model_name}")
+            print(f"RMSE: {best_rmse:.2f}, R²: {best_r2:.4f}")
+            
+            # Display performance comparison of all ensemble models
+            print(f"\nAll ensemble models performance comparison:")
+            for model_name in ['Bagging', 'Voting', 'Stacking', 'GradientBoosting']:
+                if model_name in all_results:
+                    rmse = all_results[model_name]['RMSE']
+                    r2 = all_results[model_name]['R²']
+                    indicator = "👑" if model_name == 'GradientBoosting' else "  "
+                    print(f"{indicator} {model_name}: RMSE={rmse:.2f}, R²={r2:.4f}")
+        else:
+            print("❌ GradientBoosting model not found!")
+            return None
         
         # 准备要保存的模型对象
         model_to_save = None
@@ -680,40 +681,40 @@ class EnsembleLearningComparison:
         model_filename = f'best_ensemble_model_{best_model_name.replace("-", "_").replace(" ", "_")}.sav'
         
         try:
-            # 使用joblib保存（推荐用于scikit-learn模型）
+            # Use joblib to save (recommended for scikit-learn models)
             joblib.dump(model_package, model_filename)
-            print(f"✅ 模型已成功保存为: {model_filename}")
+            print(f"✅ Model successfully saved as: {model_filename}")
             
-            # 同时保存为.pkl文件作为备份
+            # Also save as .pkl file as backup
             pkl_filename = model_filename.replace('.sav', '.pkl')
             with open(pkl_filename, 'wb') as f:
                 pickle.dump(model_package, f)
-            print(f"✅ 备份文件已保存为: {pkl_filename}")
+            print(f"✅ Backup file saved as: {pkl_filename}")
             
         except Exception as e:
-            print(f"❌ 保存模型时发生错误: {str(e)}")
+            print(f"❌ Error occurred while saving model: {str(e)}")
             return None
         
-        # 验证保存的模型
+        # Verify saved model
         self.verify_saved_model(model_filename, model_package)
         
         return model_filename
     
     def verify_saved_model(self, filename, original_model_package):
-        """验证保存的模型是否可以正确加载和预测"""
-        print("验证保存的模型...")
+        """Verify if saved model can be loaded and predict correctly"""
+        print("Verifying saved model...")
         
         try:
-            # 加载模型
+            # Load model
             loaded_model_package = joblib.load(filename)
             
-            # 检查元数据
-            print(f"加载的模型名称: {loaded_model_package['model_name']}")
-            print(f"模型性能: RMSE={loaded_model_package['performance']['RMSE']:.2f}")
+            # Check metadata
+            print(f"Loaded model name: {loaded_model_package['model_name']}")
+            print(f"Model performance: RMSE={loaded_model_package['performance']['RMSE']:.2f}")
             
-            # 进行预测测试
+            # Perform prediction test
             if loaded_model_package['model_name'] == 'Stacking':
-                # Stacking模型预测
+                # Stacking model prediction
                 test_features = np.zeros((len(self.X_test), len(loaded_model_package['model']['level0_models'])))
                 
                 for i, level0_model in enumerate(loaded_model_package['model']['level0_models']):
@@ -725,56 +726,56 @@ class EnsembleLearningComparison:
                 test_predictions = loaded_model_package['model']['level1_model'].predict(test_features)
                 
             else:
-                # 其他模型预测
+                # Other model prediction
                 model = loaded_model_package['model']
                 if loaded_model_package['model_name'] in ['Neural Network', 'SVR']:
                     test_predictions = model.predict(self.X_test_scaled)
                 else:
                     test_predictions = model.predict(self.X_test)
             
-            # 计算预测误差
+            # Calculate prediction error
             test_rmse = np.sqrt(mean_squared_error(self.y_test, test_predictions))
             original_rmse = original_model_package['performance']['RMSE']
             
-            if abs(test_rmse - original_rmse) < 0.01:  # 允许小的数值误差
-                print("✅ 模型验证成功！加载的模型预测结果与原始模型一致")
+            if abs(test_rmse - original_rmse) < 0.01:  # Allow small numerical errors
+                print("✅ Model verification successful! Loaded model predictions match original model")
             else:
-                print(f"⚠️ 预测结果有差异: 原始RMSE={original_rmse:.2f}, 加载后RMSE={test_rmse:.2f}")
+                print(f"⚠️ Prediction differences found: Original RMSE={original_rmse:.2f}, Loaded RMSE={test_rmse:.2f}")
                 
         except Exception as e:
-            print(f"❌ 模型验证失败: {str(e)}")
+            print(f"❌ Model verification failed: {str(e)}")
     
     @staticmethod
     def load_best_model(filename):
-        """静态方法：加载保存的最优模型"""
+        """Static method: Load saved optimal model"""
         try:
             model_package = joblib.load(filename)
-            print(f"✅ 模型 '{model_package['model_name']}' 加载成功")
-            print(f"模型性能: RMSE={model_package['performance']['RMSE']:.2f}, R²={model_package['performance']['R²']:.4f}")
+            print(f"✅ Model '{model_package['model_name']}' loaded successfully")
+            print(f"Model performance: RMSE={model_package['performance']['RMSE']:.2f}, R²={model_package['performance']['R²']:.4f}")
             return model_package
         except Exception as e:
-            print(f"❌ 模型加载失败: {str(e)}")
+            print(f"❌ Model loading failed: {str(e)}")
             return None
     
     @staticmethod
     def predict_with_saved_model(model_package, X_new):
-        """使用保存的模型进行预测"""
+        """Use saved model for prediction"""
         try:
-            # 检查特征列是否匹配
+            # Check if feature columns match
             if hasattr(X_new, 'columns'):
                 expected_features = model_package['feature_columns']
                 if list(X_new.columns) != expected_features:
-                    print("⚠️ 警告: 输入特征与模型训练时的特征不完全匹配")
-                    print(f"期望特征: {expected_features}")
-                    print(f"输入特征: {list(X_new.columns)}")
+                    print("⚠️ Warning: Input features do not fully match training features")
+                    print(f"Expected features: {expected_features}")
+                    print(f"Input features: {list(X_new.columns)}")
             
-            # 数据预处理
+            # Data preprocessing
             scaler = model_package['scaler']
             model = model_package['model']
             model_name = model_package['model_name']
             
             if model_name == 'Stacking':
-                # Stacking模型预测
+                # Stacking model prediction
                 level0_predictions = np.zeros((len(X_new), len(model['level0_models'])))
                 
                 for i, level0_model in enumerate(model['level0_models']):
@@ -787,7 +788,7 @@ class EnsembleLearningComparison:
                 predictions = model['level1_model'].predict(level0_predictions)
                 
             else:
-                # 其他模型预测
+                # Other model prediction
                 if model_name in ['Neural Network', 'SVR']:
                     X_scaled = scaler.transform(X_new)
                     predictions = model.predict(X_scaled)
@@ -797,7 +798,7 @@ class EnsembleLearningComparison:
             return predictions
             
         except Exception as e:
-            print(f"❌ 预测失败: {str(e)}")
+            print(f"❌ Prediction failed: {str(e)}")
             return None
     
     def run_complete_analysis(self):
@@ -829,7 +830,7 @@ class EnsembleLearningComparison:
         print(f"📊 Performance images: ensemble_performance_comparison.png, ensemble_detailed_comparison.png")
         print(f"📋 Analysis report: ensemble_learning_report.txt")
         if best_model_file:
-            print(f"💾 Best model saved as: {best_model_file}")
+            print(f"💾 GradientBoosting model saved as: {best_model_file}")
         print("="*60)
 
 # Main program
